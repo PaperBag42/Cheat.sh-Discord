@@ -19,10 +19,22 @@ CWORD = "!cht"
 
 @client.event
 async def on_ready():
-	print('Logged in as')
-	print(client.user.name)
-	print(client.user.id)
-	print('------')
+	print("Successfully logged in.")
+	for server in client.servers:
+		for channel in server.channels:
+			if channel.name == "general":  # FIXME
+				client.send_message(channel, """```bash
+# cheat.sh, the only cheatsheet you need, is now on discord.
+
+# Usage is similar to the cht.sh command line client:
+!cht go reverse a list
+!cht python random list elements
+!cht js parse json
+
+# For more information, go to:
+# https://github.com/chubin/cheat.sh
+# https://github.com/PaperBag42/cheat.sh-discord
+```""")
 
 
 @client.event
