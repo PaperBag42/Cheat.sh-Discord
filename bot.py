@@ -9,7 +9,7 @@ TODOs
 1. get cheats with http instead of the shell script
 2. find a better way to determine the programming language
 3. replace comments with normal text (maybe not? it looks kinda cool how it is now)
-4. aaaand I forgot the rest
+4. make a special shell mode for specific channels
 """
 
 client = discord.Client()
