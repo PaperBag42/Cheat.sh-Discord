@@ -2,7 +2,7 @@ import discord
 import subprocess
 import logging
 import re
-from sys import argv
+from sys import argv, stderr
 
 """
 TODOs
@@ -13,7 +13,6 @@ TODOs
 
 client = discord.Client()
 
-TOKEN = "NDY3MjgyMzU2NjgwNjU0ODQ4.DiojdA.wQgmchx9Dx3-1Sj1C8KAXb8qXaA"
 CWORD = "!cht"
 
 
@@ -50,4 +49,7 @@ def parse_cht(text, lang):
 
 if __name__ == "__main__":
 	logging.basicConfig(level=logging.INFO)
-	client.run(TOKEN)
+	if len(argv) > 1:
+		client.run(argv[1])
+	else:
+		print("Usage: python bot.py TOKEN", file=stderr)
