@@ -8,7 +8,8 @@ from sys import argv, stderr
 TODOs
 1. get cheats with http instead of the shell script
 2. find a better way to determine the programming language
-3. replace comments with normal text
+3. replace comments with normal text (maybe not? it looks kinda cool how it is now)
+4. aaaand I forgot the rest
 """
 
 client = discord.Client()
@@ -29,10 +30,18 @@ async def on_message(message):
 	cmd = message.content.split()
 	
 	if cmd[0] == CWORD:
+		# TODO #2
+		# it seems that if you give cht just the programming language e.g. cht.sh python,
+		# it shows you how to use it from the terminal. thats why I put the "bash".
+		# there's probably a better way, maybe it will be easier after #1
 		await client.send_message(message.channel, parse_cht(get_cht(cmd), cmd[1] if len(cmd) > 2 else "bash"))
 
 
-def get_cht(command):
+def get_cht(command):  # TODO #1
+	"""
+	Gets the output from the cht.sh script.
+	:param command: input for the script
+	"""
 	return subprocess.run(
 		["cht.sh"] + command[1:],
 		stdout=subprocess.PIPE,
@@ -41,6 +50,12 @@ def get_cht(command):
 
 
 def parse_cht(text, lang):
+	"""
+	Removes the terminal color codes and applies Discord's highlighting
+	:param text: the text to highlight
+	:param lang: name of the programming language to highlight the text by
+	:return: the formatted text
+	"""
 	return "```{lang}\n{code}\n```".format(
 		lang=lang,
 		code=re.sub(r"\x1b\[.+?m", "", text)  # simple regex to remove color codes
@@ -53,3 +68,4 @@ if __name__ == "__main__":
 		client.run(argv[1])
 	else:
 		print("Usage: python bot.py TOKEN", file=stderr)
+		# this gives "unclosed client session" but I think we can ignore that
