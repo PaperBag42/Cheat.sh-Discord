@@ -54,6 +54,8 @@ def get_cht(command):  # TODO #1
 	Gets the output from the cht.sh script.
 	:param command: input for the script
 	"""
+	if command[1] == "--shell":
+		return "Shell mode is not available."
 	return subprocess.run(
 		["cht.sh"] + command[1:],
 		stdout=subprocess.PIPE,
