@@ -2,20 +2,28 @@ import discord
 import subprocess
 import logging
 import re
+import requests
 from sys import argv, stderr
 
 """
 TODOs
-1. get cheats with http instead of the shell script
-2. find a better way to determine the programming language
-3. replace comments with normal text (maybe not? it looks kinda cool how it is now)
-4. make a special shell mode for specific channels
+1. find a better way to determine the programming language
+2. replace comments with normal text (maybe not? it looks kinda cool how it is now)
+3. make a special shell mode for specific channels
 """
 
 client = discord.Client()
 
-CWORD = "!cht"
+headers = requests.utils.default_headers()
 
+headers.update(
+	{
+		'User-Agent': 'curl'
+	}
+)
+
+CWORD = "!cht"
+API_URL_BASE = 'http://cht.sh'
 
 @client.event
 async def on_ready():
@@ -42,7 +50,7 @@ async def on_ready():
 @client.event
 async def on_message(message):
 	cmd = message.content.split()
-	print(message)
+	print(message.content)
 	if cmd[0] == CWORD:
 		# TODO #2
 		# it seems that if you give cht just the programming language e.g. cht.sh python,
@@ -56,13 +64,18 @@ def get_cht(command):  # TODO #1
 	Gets the output from the cht.sh script.
 	:param command: input for the script
 	"""
-	if command[1] == "--shell":
+	if "--shell" in command:
 		return "Shell mode is not available."
-	return subprocess.run(
-		["cht.sh"] + command[1:],
-		stdout=subprocess.PIPE,
-		stderr=subprocess.STDOUT
-	).stdout.decode()
+
+	if len(command) > 3:
+		formated_command = '/' + command[1] + '/' + '+'.join(command[2:])
+	else:
+		formated_command = '/' + ''.join(command[1:])
+	print(formated_command)
+	response = requests.get(API_URL_BASE + formated_command, headers=headers)
+	if response.status_code != 200:
+		return "Can't acsess to cheat server at the moment"
+	return response.text
 
 
 def parse_cht(text, lang):
