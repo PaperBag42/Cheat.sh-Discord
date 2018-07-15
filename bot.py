@@ -19,11 +19,13 @@ CWORD = "!cht"
 
 @client.event
 async def on_ready():
-	print("Successfully logged in.")
+	print("Successfully logged in as {client.user.name}".format(client=client))
 	for server in client.servers:
+		print(server)
 		for channel in server.channels:
-			if channel.name == "general":  # FIXME
-				client.send_message(channel, """```bash
+			print(channel)
+			if channel.name == "general":
+				await client.send_message(channel, """```bash
 # cheat.sh, the only cheatsheet you need, is now on discord.
 
 # Usage is similar to the cht.sh command line client:
@@ -40,7 +42,7 @@ async def on_ready():
 @client.event
 async def on_message(message):
 	cmd = message.content.split()
-	
+	print(message)
 	if cmd[0] == CWORD:
 		# TODO #2
 		# it seems that if you give cht just the programming language e.g. cht.sh python,

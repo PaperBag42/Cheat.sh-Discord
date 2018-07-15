@@ -10,6 +10,14 @@ The cheat.sh Discord bot can not only save time, but also lmgtfy.com links.
 !cht python random list elements
 !cht js parse json
 ```
+
+### How to Install:
+Just run
+```
+pip3 install -r requirements.txt
+```
+And you have it!
+
 ### How to Use
 Run the script with your bot token (Python 3.5+ required)
 ```
