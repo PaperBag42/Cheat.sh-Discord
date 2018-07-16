@@ -5,6 +5,8 @@ import re
 import requests
 from sys import argv, stderr
 
+from consts import *
+
 """
 TODOs
 1. find a better way to determine the programming language
@@ -21,21 +23,6 @@ headers.update(
 		'User-Agent': 'curl'
 	}
 )
-
-CWORD = "!cht"
-API_URL_BASE = 'http://cht.sh'
-HELP_TEXT = """```bash
-# cheat.sh, the only cheatsheet you need, is now on discord.
-
-# Usage is similar to the cht.sh command line client:
-!cht go reverse a list
-!cht python random list elements
-!cht js parse json
-
-# For more information, go to:
-# https://github.com/chubin/cheat.sh
-# https://github.com/PaperBag42/cheat.sh-discord
-```"""
 
 @client.event
 async def on_ready():
@@ -62,13 +49,17 @@ async def on_message(message):
 	cmd = message.content.split()
 	print(message.content)
 	if cmd[0] == CWORD and len(cmd) > 1:
+		if '--help' in cmd:
+			await client.send_message(message.channel, HELP_TEXT)
+		elif len(cmd) == 1:
+			await client.send_message(message.channel, HELP_TEXT)
+		else:
+
 		# TODO #2
 		# it seems that if you give cht just the programming language e.g. cht.sh python,
 		# it shows you how to use it from the terminal. thats why I put the "bash".
 		# there's probably a better way, maybe it will be easier after #1
-		await client.send_message(message.channel, parse_cht(get_cht(cmd), cmd[1] if len(cmd) > 2 else "bash"))
-	elif len(cmd) == 1:
-		await client.send_message(message.channel, HELP_TEXT)
+			await client.send_message(message.channel, parse_cht(get_cht(cmd), cmd[1] if len(cmd) > 2 else "bash"))
 
 
 def get_cht(command):  # TODO #1
@@ -90,6 +81,7 @@ def get_cht(command):  # TODO #1
 		return "Can't acsess to cheat server at the moment"
 	elif response.status_code == 500: # internal server error
 		return "Somthing is wrong with the cheat servers"
+		
 	return response.text
 
 
