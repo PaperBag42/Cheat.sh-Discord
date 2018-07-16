@@ -24,16 +24,7 @@ headers.update(
 
 CWORD = "!cht"
 API_URL_BASE = 'http://cht.sh'
-
-@client.event
-async def on_ready():
-	print("Successfully logged in as {client.user.name}".format(client=client))
-	for server in client.servers:
-		print(server)
-		for channel in server.channels:
-			print(channel)
-			if channel.name == "general":
-				await client.send_message(channel, """```bash
+HELP_TEXT = """```bash
 # cheat.sh, the only cheatsheet you need, is now on discord.
 
 # Usage is similar to the cht.sh command line client:
@@ -44,19 +35,40 @@ async def on_ready():
 # For more information, go to:
 # https://github.com/chubin/cheat.sh
 # https://github.com/PaperBag42/cheat.sh-discord
-```""")
+```"""
+
+@client.event
+async def on_ready():
+	"""
+	client connected, sends a Hi message to general
+	:return:None
+	"""
+	print("Successfully logged in as {client.user.name}".format(client=client))
+	for server in client.servers:
+		print(server)
+		for channel in server.channels:
+			print(channel)
+			if channel.name == "general":
+				await client.send_message(channel, HELP_TEXT)
 
 
 @client.event
 async def on_message(message):
+	"""
+	there is a massage on server, response if needed
+	:param message: massage recived
+	:return: None
+	"""
 	cmd = message.content.split()
 	print(message.content)
-	if cmd[0] == CWORD:
+	if cmd[0] == CWORD and len(cmd) > 1:
 		# TODO #2
 		# it seems that if you give cht just the programming language e.g. cht.sh python,
 		# it shows you how to use it from the terminal. thats why I put the "bash".
 		# there's probably a better way, maybe it will be easier after #1
 		await client.send_message(message.channel, parse_cht(get_cht(cmd), cmd[1] if len(cmd) > 2 else "bash"))
+	elif len(cmd) == 1:
+		await client.send_message(message.channel, HELP_TEXT)
 
 
 def get_cht(command):  # TODO #1
@@ -71,10 +83,13 @@ def get_cht(command):  # TODO #1
 		formated_command = '/' + command[1] + '/' + '+'.join(command[2:])
 	else:
 		formated_command = '/' + ''.join(command[1:])
-	print(formated_command)
+
+	# get a response for command
 	response = requests.get(API_URL_BASE + formated_command, headers=headers)
-	if response.status_code != 200:
+	if response.status_code != 200 and response.status_code != 500:
 		return "Can't acsess to cheat server at the moment"
+	elif response.status_code == 500: # internal server error
+		return "Somthing is wrong with the cheat servers"
 	return response.text
 
 
