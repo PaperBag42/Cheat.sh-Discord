@@ -51,7 +51,7 @@ async def on_message(message):
 		elif len(cmd) == 1:
 			await client.send_message(message.channel, HELP_TEXT)
 		else:
-			msg = parse_cht(get_cht(cmd), cmd[1] if len(cmd) > 2 else "bash")
+			msg = parse_cht(get_cht(cmd), get_lang(cmd))
 			first = True
 			while msg:
 				so_far_len = 0
@@ -62,14 +62,14 @@ async def on_message(message):
 						so_far_len += len(line) + 1 
 						if so_far_len >= MAX_LEN:
 							print('From line 65')
-							await client.send_message(message.channel, parse_cht(msg_part, cmd[1] if len(cmd) > 2 else "bash")) 
+							await client.send_message(message.channel, parse_cht(msg_part, get_lang(cmd))) 
 							break
 						else:
 							msg_part += line + '\n'
 				else:
 					if not first:
 						print('From line 73')
-						await client.send_message(message.channel, parse_cht(msg, cmd[1] if len(cmd) > 2 else "bash")[:-3])
+						await client.send_message(message.channel, parse_cht(msg, get_lang(cmd))[:-3])
 					else:
 						print('From line 76')
 						await client.send_message(message.channel, msg)
@@ -97,6 +97,16 @@ def get_cht(command):  # TODO #1
 	elif response.status_code == 500: # internal server error
 		return "Somthing is wrong with the cheat servers"
 	return response.text
+
+
+def get_lang(command):
+	"""
+	Gets the name of the relevant programming language.
+	:param command: input for the script
+	"""
+	if len(command) < 3: # cht.sh [lang] usually results in an explanation on how to install/compile/run from the terminal
+		return "bash"
+	return LANG_ALIASES.get(command[1], command[1])
 
 
 def parse_cht(text, lang):
