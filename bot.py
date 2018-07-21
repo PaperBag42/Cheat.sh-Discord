@@ -47,8 +47,7 @@ async def on_message(message):
 	:return: None
 	"""
 	cmd = message.content.split()
-	print(message.content)
-	if cmd[0] == CWORD and len(cmd) > 1:
+	if cmd[0] == CWORD:
 		if '--help' in cmd:
 			await client.send_message(message.channel, HELP_TEXT)
 		elif len(cmd) == 1:
@@ -73,7 +72,7 @@ def get_cht(command):  # TODO #1
 	if len(command) > 3:
 		formated_command = '/' + command[1] + '/' + '+'.join(command[2:])
 	else:
-		formated_command = '/' + ''.join(command[1:])
+		formated_command = '/' + '/'.join(command[1:])
 
 	# get a response for command
 	response = requests.get(API_URL_BASE + formated_command, headers=headers)
@@ -81,7 +80,7 @@ def get_cht(command):  # TODO #1
 		return "Can't acsess to cheat server at the moment"
 	elif response.status_code == 500: # internal server error
 		return "Somthing is wrong with the cheat servers"
-		
+	print(response.text)
 	return response.text
 
 
@@ -99,7 +98,7 @@ def parse_cht(text, lang):
 	
 
 if __name__ == "__main__":
-	logging.basicConfig(level=logging.INFO)
+	logging.basicConfig(level=logging.WARN)
 	if len(argv) > 1:
 		client.run(argv[1])
 	else:
