@@ -58,13 +58,14 @@ async def on_message(message):
 						if so_far_len >= MAX_LEN:
 							print('From line 65')
 							await client.send_message(message.channel, parse_cht(msg_part, get_lang(cmd))) 
+							msg_part = line
 							break
 						else:
 							msg_part += line + '\n'
 				else:
 					if not first:
 						print('From line 73')
-						await client.send_message(message.channel, parse_cht(msg, get_lang(cmd))[:-3])
+						await client.send_message(message.channel, parse_cht(msg_part + msg, get_lang(cmd))[:-3])
 					else:
 						print('From line 76')
 						await client.send_message(message.channel, msg)
