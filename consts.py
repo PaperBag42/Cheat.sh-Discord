@@ -15,3 +15,4 @@ HELP_TEXT = """```bash
 # https://github.com/chubin/cheat.sh
 # https://github.com/PaperBag42/cheat.sh-discord
 ```"""
+MAX_LEN = 1990

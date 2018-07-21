@@ -53,12 +53,30 @@ async def on_message(message):
 		elif len(cmd) == 1:
 			await client.send_message(message.channel, HELP_TEXT)
 		else:
-
-		# TODO #2
-		# it seems that if you give cht just the programming language e.g. cht.sh python,
-		# it shows you how to use it from the terminal. thats why I put the "bash".
-		# there's probably a better way, maybe it will be easier after #1
-			await client.send_message(message.channel, parse_cht(get_cht(cmd), cmd[1] if len(cmd) > 2 else "bash"))
+			msg = parse_cht(get_cht(cmd), cmd[1] if len(cmd) > 2 else "bash")
+			first = True
+			while msg:
+				so_far_len = 0
+				if len(msg) > MAX_LEN:
+					first = False
+					msg_part = ''
+					for line in msg.split('\n'):
+						so_far_len += len(line) + 1 
+						if so_far_len >= MAX_LEN:
+							print('From line 65')
+							await client.send_message(message.channel, parse_cht(msg_part, cmd[1] if len(cmd) > 2 else "bash")) 
+							break
+						else:
+							msg_part += line + '\n'
+				else:
+					if not first:
+						print('From line 73')
+						await client.send_message(message.channel, parse_cht(msg, cmd[1] if len(cmd) > 2 else "bash")[:-3])
+					else:
+						print('From line 76')
+						await client.send_message(message.channel, msg)
+					so_far_len = len(msg) - 1
+				msg = msg[so_far_len + 1:]
 
 
 def get_cht(command):  # TODO #1
@@ -80,7 +98,6 @@ def get_cht(command):  # TODO #1
 		return "Can't acsess to cheat server at the moment"
 	elif response.status_code == 500: # internal server error
 		return "Somthing is wrong with the cheat servers"
-	print(response.text)
 	return response.text
 
 
