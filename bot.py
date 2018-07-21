@@ -18,17 +18,15 @@ client = discord.Client()
 
 headers = requests.utils.default_headers()
 
-headers.update(
-	{
-		'User-Agent': 'curl'
-	}
-)
+headers.update({
+	'User-Agent': 'curl'
+})
 
 @client.event
 async def on_ready():
 	"""
 	client connected, sends a Hi message to general
-	:return:None
+	:return: None
 	"""
 	print("Successfully logged in as {client.user.name}".format(client=client))
 	for server in client.servers:
