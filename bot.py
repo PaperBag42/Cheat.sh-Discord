@@ -81,9 +81,9 @@ def get_cht(command):
 		return "Shell mode is not available."
 
 	if len(command) > 3:
-		formated_command = '/' + command[1] + '/' + '+'.join(command[2:])
+		formated_command = command[1] + '/' + '+'.join(command[2:])
 	else:
-		formated_command = '/' + '/'.join(command[1:])
+		formated_command = '/'.join(command[1:])
 
 	# get a response for command
 	response = requests.get(API_URL_BASE + formated_command, headers=headers)

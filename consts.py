@@ -1,5 +1,5 @@
 CWORD = "!cht"
-API_URL_BASE = 'http://cht.sh'
+API_URL_BASE = 'http://cht.sh/'
 HELP_TEXT = """```bash
 # cheat.sh, the only cheatsheet you need, is now on discord.
 
