@@ -24,11 +24,9 @@ async def on_ready():
 	client connected, sends a Hi message to general
 	:return: None
 	"""
-	print("Successfully logged in as {client.user.name}".format(client=client))
+	print("Successfully logged in as {}".format(client.user.name))
 	for server in client.servers:
-		print(server)
 		for channel in server.channels:
-			print(channel)
 			if channel.name == "general":
 				await client.send_message(channel, HELP_TEXT)
 
@@ -42,6 +40,7 @@ async def on_message(message):
 	"""
 	cmd = message.content.split()
 	if cmd[0] == CWORD:
+		print("{0.author.name} sent: {0.content}".format(message))
 		if '--help' in cmd:
 			await client.send_message(message.channel, HELP_TEXT)
 		elif len(cmd) == 1:
