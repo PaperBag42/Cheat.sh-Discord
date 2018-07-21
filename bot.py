@@ -1,5 +1,4 @@
 import discord
-import subprocess
 import logging
 import re
 import requests
@@ -9,15 +8,12 @@ from consts import *
 
 """
 TODOs
-1. find a better way to determine the programming language
-2. replace comments with normal text (maybe not? it looks kinda cool how it is now)
-3. make a special shell mode for specific channels
+1. make a special shell mode for specific channels
 """
 
 client = discord.Client()
 
 headers = requests.utils.default_headers()
-
 headers.update({
 	'User-Agent': 'curl'
 })
@@ -77,7 +73,7 @@ async def on_message(message):
 				msg = msg[so_far_len + 1:]
 
 
-def get_cht(command):  # TODO #1
+def get_cht(command):
 	"""
 	Gets the output from the cht.sh script.
 	:param command: input for the script
