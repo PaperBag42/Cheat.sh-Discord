@@ -1,0 +1,3 @@
+The only cheat sheet you'll ever need.
+Communicates with the cht.sh web server to provide you and your friends
+with awesome community-created cheats for a variety of programming languages.
