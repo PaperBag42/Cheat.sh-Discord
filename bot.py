@@ -17,16 +17,16 @@ headers.update({
 })
 
 class CheatClient(discord.Client):
-	async def on_ready(self):
+	async def on_server_join(self, server):
 		"""
 		client connected, sends a Hi message to general
 		:return: None
 		"""
-		print("Successfully logged in as {}".format(self.user.name))
-		for server in self.servers:
-			for channel in server.channels:
-				if channel.name == "general":
-					await self.send_message(channel, HELP_TEXT)
+		print("Successfully logged in to {}".format(server.name))
+		for channel in server.channels:
+			if channel.name == "general":
+				await self.send_message(channel, HELP_TEXT)
+				break
 
 
 	async def on_message(self, message):
