@@ -31,8 +31,8 @@ class CheatClient(discord.Client):
 
 	async def on_message(self, message):
 		"""
-		there is a massage on server, response if needed
-		:param message: massage recived
+		there is a message on server, response if needed
+		:param message: message recived
 		:return: None
 		"""
 		cmd = message.content.split()
@@ -78,10 +78,7 @@ def get_cht(command):
 	if "--shell" in command:
 		return "Shell mode is not available."
 
-	if len(command) > 3:
-		formated_command = command[1] + '/' + '+'.join(command[2:])
-	else:
-		formated_command = '/'.join(command[1:])
+	formated_command = command[0] + '/' + '+'.join(command[1:])
 
 	# get a response for command
 	response = requests.get(API_URL_BASE + formated_command, headers=headers)
