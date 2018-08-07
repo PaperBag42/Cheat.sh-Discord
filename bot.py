@@ -11,66 +11,63 @@ TODOs
 1. make a special shell mode for specific channels
 """
 
-client = discord.Client()
-
 headers = requests.utils.default_headers()
 headers.update({
 	'User-Agent': 'curl'
 })
 
-@client.event
-async def on_ready():
-	"""
-	client connected, sends a Hi message to general
-	:return: None
-	"""
-	print("Successfully logged in as {}".format(client.user.name))
-	for server in client.servers:
-		for channel in server.channels:
-			if channel.name == "general":
-				await client.send_message(channel, HELP_TEXT)
+class CheatClient(discord.Client):
+	async def on_ready(self):
+		"""
+		client connected, sends a Hi message to general
+		:return: None
+		"""
+		print("Successfully logged in as {}".format(self.user.name))
+		for server in self.servers:
+			for channel in server.channels:
+				if channel.name == "general":
+					await self.send_message(channel, HELP_TEXT)
 
 
-@client.event
-async def on_message(message):
-	"""
-	there is a massage on server, response if needed
-	:param message: massage recived
-	:return: None
-	"""
-	cmd = message.content.split()
-	if cmd[0] == CWORD:
-		print("{0.author.name} sent: {0.content}".format(message))
-		if '--help' in cmd:
-			await client.send_message(message.channel, HELP_TEXT)
-		elif len(cmd) == 1:
-			await client.send_message(message.channel, HELP_TEXT)
-		else:
-			msg = parse_cht(get_cht(cmd), get_lang(cmd))
-			first = True
-			while msg:
-				so_far_len = 0
-				if len(msg) > MAX_LEN:
-					first = False
-					msg_part = ''
-					for line in msg.split('\n'):
-						so_far_len += len(line) + 1 
-						if so_far_len >= MAX_LEN:
-							print('From line 65')
-							await client.send_message(message.channel, parse_cht(msg_part, get_lang(cmd))) 
-							msg_part = line
-							break
-						else:
-							msg_part += line + '\n'
-				else:
-					if not first:
-						print('From line 73')
-						await client.send_message(message.channel, parse_cht(msg_part + msg, get_lang(cmd))[:-3])
+	async def on_message(self, message):
+		"""
+		there is a massage on server, response if needed
+		:param message: massage recived
+		:return: None
+		"""
+		cmd = message.content.split()
+		if cmd[0] == CWORD:
+			print("{0.author.name} sent: {0.content}".format(message))
+			if '--help' in cmd:
+				await self.send_message(message.channel, HELP_TEXT)
+			elif len(cmd) == 1:
+				await self.send_message(message.channel, HELP_TEXT)
+			else:
+				msg = parse_cht(get_cht(cmd), get_lang(cmd))
+				first = True
+				while msg:
+					so_far_len = 0
+					if len(msg) > MAX_LEN:
+						first = False
+						msg_part = ''
+						for line in msg.split('\n'):
+							so_far_len += len(line) + 1 
+							if so_far_len >= MAX_LEN:
+								print('From line 65')
+								await self.send_message(message.channel, parse_cht(msg_part, get_lang(cmd))) 
+								msg_part = line
+								break
+							else:
+								msg_part += line + '\n'
 					else:
-						print('From line 76')
-						await client.send_message(message.channel, msg)
-					so_far_len = len(msg) - 1
-				msg = msg[so_far_len + 1:]
+						if not first:
+							print('From line 73')
+							await self.send_message(message.channel, parse_cht(msg_part + msg, get_lang(cmd))[:-3])
+						else:
+							print('From line 76')
+							await self.send_message(message.channel, msg)
+						so_far_len = len(msg) - 1
+					msg = msg[so_far_len + 1:]
 
 
 def get_cht(command):
@@ -121,7 +118,6 @@ def parse_cht(text, lang):
 if __name__ == "__main__":
 	logging.basicConfig(level=logging.WARN)
 	if len(argv) > 1:
-		client.run(argv[1])
+		CheatClient().run(argv[1])
 	else:
 		print("Usage: python bot.py TOKEN", file=stderr)
-		# this gives "unclosed client session" but I think we can ignore that
