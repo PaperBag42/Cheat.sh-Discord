@@ -6,6 +6,7 @@ import os
 
 from logging import log, INFO, WARN
 from sys import argv, exit
+from typing import Dict, List
 
 from consts import *
 
@@ -14,13 +15,13 @@ TODOs
 1. make a special shell mode for specific channels
 '''
 
-headers = requests.utils.default_headers()
+headers: Dict[str, str] = requests.utils.default_headers()
 headers.update({
 	'User-Agent': 'curl'
 })
 
 class CheatClient(discord.Client):
-	async def on_server_join(self, server):
+	async def on_server_join(self, server: discord.Server):
 		'''
 		client connected, sends a Hi message to general
 		:return: None
@@ -32,7 +33,7 @@ class CheatClient(discord.Client):
 				break
 
 
-	async def on_message(self, message):
+	async def on_message(self, message: discord.Message):
 		'''
 		A message was sent, respond if needed
 		:param message: message received
@@ -60,7 +61,7 @@ class CheatClient(discord.Client):
 					msg = msg[len(part):]
 
 
-def get_cht(command):
+def get_cht(command: List[str]) -> str:
 	'''
 	Gets the output from the cht.sh script.
 	:param command: input for the script
