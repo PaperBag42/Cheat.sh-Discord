@@ -55,7 +55,8 @@ class CheatClient(discord.Client):
 						msg_part = ''
 						for line in msg.split('\n'):
 							so_far_len += len(line) + 1 
-							if so_far_len >= MAX_LEN:
+							if so_far_len >= MAX_LEN-1:
+								print(len(parse_cht(msg_part, get_lang(cmd))))
 								await self.send_message(message.channel, parse_cht(msg_part, get_lang(cmd))) 
 								msg_part = line
 								break
