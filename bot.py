@@ -31,40 +31,30 @@ class CheatClient(discord.Client):
 
 	async def on_message(self, message):
 		"""
-		there is a message on server, response if needed
-		:param message: message recived
+		A message was sent, respond if needed
+		:param message: message received
 		:return: None
 		"""
 		cmd = message.content.split()
 		if cmd[0] == CWORD:
 			print("{0.author.name} sent: {0.content}".format(message))
-			if '--help' in cmd:
-				await self.send_message(message.channel, HELP_TEXT)
-			elif len(cmd) == 1:
+			if "--help" in cmd or len(cmd) == 1:
 				await self.send_message(message.channel, HELP_TEXT)
 			else:
-				msg = parse_cht(get_cht(cmd), get_lang(cmd))
-				first = True
-				while msg:
-					so_far_len = 0
-					if len(msg) > MAX_LEN:
-						first = False
-						msg_part = ''
-						for line in msg.split('\n'):
-							so_far_len += len(line) + 1 
-							if so_far_len >= MAX_LEN:
-								await self.send_message(message.channel, parse_cht(msg_part, get_lang(cmd))) 
-								msg_part = line
-								break
-							else:
-								msg_part += line + '\n'
-					else:
-						if not first:
-							await self.send_message(message.channel, parse_cht(msg_part + msg, get_lang(cmd))[:-3])
-						else:
-							await self.send_message(message.channel, msg)
-						so_far_len = len(msg) - 1
-					msg = msg[so_far_len + 1:]
+				# cht.sh [lang] usually results in an explanation on how to install/compile/run from the terminal
+				lang = LANG_ALIASES.get(cmd[1], cmd[1]) if len(cmd) > 2 else "bash"
+				max_len = MAX_LEN - len(lang) - 8
+				msg = re.sub(r"\x1b\[.+?m", "", get_cht(cmd))  # simple regex to remove color codes
+				
+				# splits response to avoid surpassing maximum length
+				while msg != "\n":
+					part = msg[:max_len]
+					last = part.rfind('\n')
+					if last != -1:
+						part = part[:last]
+					
+					await self.send_message(message.channel, f"```{lang}\n{part}\n```")
+					msg = msg[len(part):]
 
 
 def get_cht(command):
@@ -84,29 +74,6 @@ def get_cht(command):
 	elif response.status_code == 500: # internal server error
 		return "Somthing is wrong with the cheat servers"
 	return response.text
-
-
-def get_lang(command):
-	"""
-	Gets the name of the relevant programming language.
-	:param command: input for the script
-	"""
-	if len(command) < 3: # cht.sh [lang] usually results in an explanation on how to install/compile/run from the terminal
-		return "bash"
-	return LANG_ALIASES.get(command[1], command[1])
-
-
-def parse_cht(text, lang):
-	"""
-	Removes the terminal color codes and applies Discord's highlighting
-	:param text: the text to highlight
-	:param lang: name of the programming language to highlight the text by
-	:return: the formatted text
-	"""
-	return "```{lang}\n{code}\n```".format(
-		lang=lang,
-		code=re.sub(r"\x1b\[.+?m", "", text)  # simple regex to remove color codes
-	)
 	
 
 if __name__ == "__main__":
