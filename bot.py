@@ -2,6 +2,7 @@ import discord
 import logging
 import re
 import requests
+import os
 from sys import argv, stderr
 
 from consts import *
@@ -111,7 +112,14 @@ def parse_cht(text, lang):
 
 if __name__ == "__main__":
 	logging.basicConfig(level=logging.WARN)
+	token = ''
 	if len(argv) > 1:
-		CheatClient().run(argv[1])
+		token = argv[1]
+		logging.log(logging.INFO, 'got token from command line')
 	else:
-		print("Usage: python bot.py TOKEN", file=stderr)
+		if 'TOKEN' in os.environ:
+			token = os.environ.get('TOKEN')
+			logging.log(logging.INFO, 'got token from env')
+		else:
+			print("Usage: python bot.py TOKEN", file=stderr)
+	#CheatClient().run(token)
