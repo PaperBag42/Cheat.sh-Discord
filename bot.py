@@ -3,7 +3,9 @@ import logging
 import re
 import requests
 import os
-from sys import argv, stderr
+
+from logging import log, INFO, WARN
+from sys import argv, exit
 
 from consts import *
 
@@ -23,7 +25,7 @@ class CheatClient(discord.Client):
 		client connected, sends a Hi message to general
 		:return: None
 		"""
-		print("Successfully logged in to {}".format(server.name))
+		print(f"Successfully logged in to {server.name}")
 		for channel in server.channels:
 			if channel.name == "general":
 				await self.send_message(channel, HELP_TEXT)
@@ -111,15 +113,20 @@ def parse_cht(text, lang):
 	
 
 if __name__ == "__main__":
-	logging.basicConfig(level=logging.WARN)
-	token = ''
+	logging.basicConfig(level=WARN)
+	
 	if len(argv) > 1:
 		token = argv[1]
-		logging.log(logging.INFO, 'got token from command line')
+		log(INFO, f"Got token from command line: {token}")
+	elif "TOKEN" in os.environ:
+		token = os.environ.get("TOKEN")
+		log(INFO, f"Got token from env: {token}")
 	else:
-		if 'TOKEN' in os.environ:
-			token = os.environ.get('TOKEN')
-			logging.log(logging.INFO, 'got token from env')
-		else:
-			print("Usage: python bot.py TOKEN", file=stderr)
-	CheatClient().run(token)
+		log(INFO, "Usage: python bot.py TOKEN")
+		exit(1)
+	
+	try:
+		CheatClient().run(token)
+	except discord.errors.LoginFailure:
+		log(logging.ERROR, "Fatal: Invalid token.")
+		exit(1)
