@@ -3,7 +3,7 @@ import logging
 import re
 import requests
 import os
-from sys import argv, stderr
+from sys import argv, stderr, exit
 
 from consts import *
 
@@ -53,7 +53,8 @@ class CheatClient(discord.Client):
 						msg_part = ''
 						for line in msg.split('\n'):
 							so_far_len += len(line) + 1 
-							if so_far_len >= MAX_LEN:
+							if so_far_len >= MAX_LEN-1:
+								print(len(parse_cht(msg_part, get_lang(cmd))))
 								await self.send_message(message.channel, parse_cht(msg_part, get_lang(cmd))) 
 								msg_part = line
 								break
@@ -122,4 +123,6 @@ if __name__ == "__main__":
 			logging.log(logging.INFO, 'got token from env')
 		else:
 			print("Usage: python bot.py TOKEN", file=stderr)
+			exit(1)
 	CheatClient().run(token)
+	
