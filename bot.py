@@ -122,4 +122,4 @@ if __name__ == "__main__":
 			logging.log(logging.INFO, 'got token from env')
 		else:
 			print("Usage: python bot.py TOKEN", file=stderr)
-	#CheatClient().run(token)
+	CheatClient().run(token)
