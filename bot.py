@@ -53,7 +53,6 @@ class CheatClient(discord.Client):
 						for line in msg.split('\n'):
 							so_far_len += len(line) + 1 
 							if so_far_len >= MAX_LEN:
-								print('From line 65')
 								await self.send_message(message.channel, parse_cht(msg_part, get_lang(cmd))) 
 								msg_part = line
 								break
@@ -61,10 +60,8 @@ class CheatClient(discord.Client):
 								msg_part += line + '\n'
 					else:
 						if not first:
-							print('From line 73')
 							await self.send_message(message.channel, parse_cht(msg_part + msg, get_lang(cmd))[:-3])
 						else:
-							print('From line 76')
 							await self.send_message(message.channel, msg)
 						so_far_len = len(msg) - 1
 					msg = msg[so_far_len + 1:]
@@ -78,7 +75,7 @@ def get_cht(command):
 	if "--shell" in command:
 		return "Shell mode is not available."
 
-	formated_command = command[0] + '/' + '+'.join(command[1:])
+	formated_command = command[1] + '/' + '+'.join(command[2:])
 
 	# get a response for command
 	response = requests.get(API_URL_BASE + formated_command, headers=headers)
