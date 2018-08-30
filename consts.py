@@ -27,14 +27,19 @@ HELP_MSG = '''```bash
 HELP_SHELL = '''```bash
 # Entering shell mode{}.
 
-help		# show this help
-cd [LANG]	# change/exit the language context
-exit/quit	# exit the cheat shell
+help       # show this help
+cd [LANG]  # change/exit the language context
+exit/quit  # exit the cheat shell
 ```'''
-SHELL_CD = '`Language changed to {}.`'
-SHELL_CD_OUT = '`Exited language.`'
-SHELL_EXIT = '`Exiting shell mode.`'
-
+SHELL_CD = '''```
+Language changed to {}.
+```'''
+SHELL_CD_OUT = '''```
+Exited language.
+``'''
+SHELL_EXIT = '''```
+Exiting shell mode.
+```'''
 INVALID_LANG = '''```
 Invalid section: {}
 Valid sections:

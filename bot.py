@@ -70,9 +70,9 @@ class CheatClient(discord.Client):
 				for part in process_request(cmd):
 					await self.send_message(message.channel, part)
 				
-		elif chnl_id in self.shells:
+		elif chnl_id in self.shells and message.author.id != self.user.id:
 			if cmd[0] == 'help':
-				self.send_message(message.channel, HELP_SHELL)
+				await self.send_message(message.channel, HELP_SHELL)
 			elif cmd[0] == 'cd':
 				if len(cmd) < 2 or cmd[1] == '..':
 					self.shells[chnl_id] = ''
