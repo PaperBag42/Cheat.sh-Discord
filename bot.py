@@ -1,7 +1,7 @@
 import discord
 import logging
-import re
 import requests
+import re
 import os
 
 from logging import log, INFO, WARN
@@ -10,12 +10,14 @@ from typing import Dict, List, Generator, NewType
 
 from consts import *
 
+
 ChannelID = NewType('ChannelID', int)
 
 headers: Dict[str, str] = requests.utils.default_headers()
 headers.update({
 	'User-Agent': 'curl'
 })
+
 
 class CheatClient(discord.Client):
 	'Costum discord client for cht.sh commands'
@@ -24,13 +26,17 @@ class CheatClient(discord.Client):
 	
 	
 	async def on_ready(self):
-		'Sets presence to a useful message'
+		'''
+		Sets presence to a useful message.
+		:return: None
+		'''
 		await self.change_presence(game=discord.Game(name=STATUS))
 	
 	
 	async def on_server_join(self, server: discord.Server):
 		'''
-		client connected, sends a Hi message to general
+		Client connected, sends a Hi message to general
+		:param server: the server the client just joined to
 		:return: None
 		'''
 		log(INFO, f'Successfully logged in to {server.name}')
@@ -38,15 +44,14 @@ class CheatClient(discord.Client):
 			if channel.name == 'general':
 				await self.send_message(channel, HELP_MSG)
 				break
-
-
+	
+	
 	async def on_message(self, message: discord.Message):
 		'''
 		A message was sent, respond if needed
-		:param message: message received
+		:param message: the received message
 		:return: None
 		'''
-		chnl_id = ChannelID(message.channel.id)
 		cmd = message.content.split('#')[0].split()
 		if not cmd:
 			return
@@ -55,6 +60,7 @@ class CheatClient(discord.Client):
 			cmd = cmd[1:]
 			if not cmd or HELP in cmd:  # show help message
 				await self.send_message(message.channel, HELP_MSG)
+			
 			elif cmd[0] == SHELL:  # activate shell mode
 				lang = ''
 				if len(cmd) >= 2:
@@ -63,56 +69,64 @@ class CheatClient(discord.Client):
 						await self.send_message(message.channel, err)
 						return
 					lang = cmd[1]
-				self.shells[chnl_id] = lang
+				self.shells[ChannelID(message.channel.id)] = lang
 				await self.send_message(message.channel, HELP_SHELL.format((' at ' + lang) if lang else ''))
 
 			else:
-				for part in process_request(cmd):
-					await self.send_message(message.channel, part)
+				await self._process_request(cmd, message.channel)
 				
-		elif chnl_id in self.shells and message.author.id != self.user.id:
-			if cmd[0] == 'help':
-				await self.send_message(message.channel, HELP_SHELL)
-			elif cmd[0] == 'cd':
-				if len(cmd) < 2 or cmd[1] == '..':
-					self.shells[chnl_id] = ''
-				else:
-					err = check_lang(cmd[1])
-					if err:
-						await self.send_message(message.channel, err)
-						return
-					self.shells[chnl_id] = cmd[1]
-				lang = self.shells[chnl_id]
-				await self.send_message(message.channel, SHELL_CD.format(lang) if lang else SHELL_CD_OUT)
-			elif cmd[0] == 'exit' or cmd[0] == 'quit':
-				del self.shells[chnl_id]
-				await self.send_message(message.channel, SHELL_EXIT)
+		elif message.channel.id in self.shells and message.author.id != self.user.id:  # in shell mode
+			await self._handle_shell(cmd, message.channel)
+	
+	
+	async def _handle_shell(self, cmd: List[str], chnl: discord.Channel):
+		'''
+		Handles commands in shell mode.
+		:param cmd: the received command
+		:param chnl: the channel the command was sent from
+		:return: None
+		'''
+		if cmd[0] == 'help':
+			await self.send_message(chnl, HELP_SHELL)
+		elif cmd[0] == 'cd':
+			if len(cmd) < 2 or cmd[1] == '..':
+				self.shells[chnl.id] = ''
 			else:
-				for part in process_request([self.shells[chnl_id]] + cmd):
-					await self.send_message(message.channel, part)
-					
+				err = check_lang(cmd[1])
+				if err:
+					await self.send_message(chnl, err)
+					return
+				self.shells[chnl.id] = cmd[1]
+			lang = self.shells[chnl.id]
+			await self.send_message(chnl, SHELL_CD.format(lang) if lang else SHELL_CD_OUT)
+		elif cmd[0] == 'exit' or cmd[0] == 'quit':
+			del self.shells[chnl.id]
+			await self.send_message(chnl, SHELL_EXIT)
+		else:
+			await self._process_request([self.shells[chnl.id]] + cmd, chnl)
 	
 	
-def process_request(cmd: List[str]) -> Generator[str, None, None]:
-	'''
-	Processes request to get a cheat sheet.
-	Splits response to avoid surpassing maximum length.
-	'''
-	res = re.sub(r'\x1b\[.+?m', '', get_cht(cmd))  # simple regex to remove color codes
-	
-	# cht.sh [lang] usually results in an explanation on how to install/compile/run from the terminal
-	lang = LANG_ALIASES.get(cmd[0], cmd[0]) if len(cmd) > 1 else 'bash'
-	max_len = MAX_LEN - len(lang) - 8  # len('```\n\n```')
-				
-	while res != '\n':
-		part = res[:max_len]
-		last = part.rfind('\n')
-		if last != -1:
-			part = part[:last]
+	async def _process_request(self, cmd: List[str], chnl: discord.Channel):
+		'''
+		Processes request to get a nd send a cheat sheet.
+		Splits response to avoid surpassing maximum length.
+		:param cmd: the received command
+		:param channel:
+		'''
+		res = re.sub(COLOR_CODE, '', get_cht(cmd))
 		
-		res = res[len(part):]
-		yield f'```{lang}\n{part}\n```'
-
+		# cht.sh [lang] usually results in an explanation on how to install/compile/run from the terminal
+		lang = LANG_ALIASES.get(cmd[0], cmd[0]) if len(cmd) > 1 else 'bash'
+		max_len = MAX_LEN - len(lang) - 8  # len('```\n\n```')
+					
+		while res != '\n':
+			part = res[:max_len]
+			last = part.rfind('\n')
+			if last != -1:
+				part = part[:last]
+			
+			res = res[len(part):]
+			await self.send_message(chnl, f'```{lang}\n{part}\n```')
 
 
 def get_cht(cmd: List[str]) -> str:

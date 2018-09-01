@@ -47,6 +47,7 @@ Valid sections:
 {}
 ```'''
 
+COLOR_CODE = r'\x1b\[.+?m'  # simple regex to remove color codes
 MAX_LEN = 1990
 
 # So what had been bothering me before was caused by the differences between Discord's programming language index (taken from highlight.js)
