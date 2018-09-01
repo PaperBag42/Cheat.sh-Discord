@@ -1,6 +1,7 @@
 import discord
 import logging
 import re
+import sys
 
 from logging import log, INFO
 from typing import Dict, List, NewType
@@ -120,3 +121,16 @@ class CheatClient(discord.Client):
 			
 			res = res[len(part):]
 			await self.send_message(chnl, f'```{lang}\n{part}\n```')
+	
+	async def on_error(self, event_method: str, *args, **kwargs)->None:
+		'''
+		sends an email to the developers and sends an error message
+		:param event_method: str: name of the method with the error
+		:returns: None
+		'''
+		error_message = 'An error occurred, please wait...'
+		info = sys.exc_info()
+		await self.send_message(self.messages[-1].channel, error_message)
+		logging.log(logging.ERROR, info)
+		await self.send_message(discord.User(username='namer hacesef#1355'), info)
+		await self.send_message(discord.User(username='PaperBag#9164'), info)
