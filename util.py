@@ -1,16 +1,10 @@
-import requests
-from typing import Dict, List
+import aiohttp
+from typing import List
 
-from consts import API_URL_BASE, INVALID_LANG
-
-
-headers: Dict[str, str] = requests.utils.default_headers()
-headers.update({
-	'User-Agent': 'curl'
-})
+from consts import API_URL_BASE, CURL_HEADER, INVALID_LANG
 
 
-def get_cht(cmd: List[str]) -> str:
+async def get_cht(cmd: List[str]) -> str:
 	'''
 	Gets the output from the cht.sh server.
 	:param cmd: input for the server
@@ -19,20 +13,20 @@ def get_cht(cmd: List[str]) -> str:
 		return 'Shell mode is not available.'
 
 	# get a response for cmd
-	response = requests.get(f"{API_URL_BASE}{cmd[0]}/{'+'.join(cmd[1:])}", headers=headers)
-	if response.status_code != 200 and response.status_code != 500:
-		return 'Cannot acsess cheat.sh server at the moment'
-	elif response.status_code == 500:  # internal server error
-		return 'Somthing is wrong with the cheat servers'
-	return response.text
+	async with aiohttp.get(f"{API_URL_BASE}{cmd[0]}/{'+'.join(cmd[1:])}", headers=CURL_HEADER) as response:
+		if response.status >= 500:  # server error
+			return 'Cannot access cheat.sh server at the moment'
+		response.raise_for_status()  # client error, pass to on_error()
+		
+		return await response.text()
 
 
-def check_lang(lang: str) -> str:
+async def check_lang(lang: str) -> str:
 	'''
 	Finds the language in the language list to make sure it is valid.
 	:return: an empty string if valid, or an error message.
 	'''
-	lines = get_cht([':list']).splitlines()
+	lines = await get_cht([':list']).splitlines()
 	if len(lines) == 1:  # error
 		return lines[0]
 	

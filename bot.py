@@ -58,7 +58,7 @@ class CheatClient(discord.Client):
 			elif cmd[0] == SHELL:  # activate shell mode
 				lang = ''
 				if len(cmd) >= 2:
-					err = check_lang(cmd[1])
+					err = await check_lang(cmd[1])
 					if err:
 						await self.send_message(message.channel, err)
 						return
@@ -112,7 +112,7 @@ class CheatClient(discord.Client):
 			if len(cmd) < 2 or cmd[1] == '..':
 				self.shells[chnl.id] = ''
 			else:
-				err = check_lang(cmd[1])
+				err = await check_lang(cmd[1])
 				if err:
 					await self.send_message(chnl, err)
 					return
@@ -133,7 +133,7 @@ class CheatClient(discord.Client):
 		:param cmd: the received command
 		:param channel: the channel the command was sent from
 		'''
-		res = re.sub(COLOR_CODE, '', get_cht(cmd))
+		res = re.sub(COLOR_CODE, '', await get_cht(cmd))
 		
 		# cht.sh [lang] usually results in an explanation on how to install/compile/run from the terminal
 		lang = LANG_ALIASES.get(cmd[0], cmd[0]) if len(cmd) > 1 else 'bash'

@@ -3,6 +3,7 @@ HELP = '--help'
 SHELL = '--shell'
 
 API_URL_BASE = 'http://cht.sh/'
+CURL_HEADER = {'User-Agent': 'curl'}
 
 STATUS = '!cht --help'
 HELP_MSG = '''```bash
