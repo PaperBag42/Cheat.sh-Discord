@@ -20,3 +20,4 @@ if __name__ == '__main__':
 		exit(1)
 	
 	CheatClient().run(token)
+	print()

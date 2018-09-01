@@ -46,6 +46,10 @@ Invalid section: {}
 Valid sections:
 {}
 ```'''
+ERROR_MSG = '''
+Something went wrong.
+I will report the error, but you can still head over to <@295577662691213312> and <@367633593654050816> and punch them in the face.
+'''
 
 COLOR_CODE = r'\x1b\[.+?m'  # simple regex to remove color codes
 MAX_LEN = 1990
@@ -57,3 +61,8 @@ MAX_LEN = 1990
 LANG_ALIASES = {
 	'python3': 'python'
 }
+
+
+# Since we're already sharing this channel on GitHub, you might as well join our server
+# https://discord.gg/jJZnGW
+ERRORS_CHANNEL = '485444048283238410'

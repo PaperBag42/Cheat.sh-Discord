@@ -1,7 +1,7 @@
 import discord
 import logging
 import re
-import sys
+import traceback
 
 from logging import log, INFO
 from typing import Dict, List, NewType
@@ -10,7 +10,7 @@ from util import get_cht, check_lang
 from consts import *
 
 
-ChannelID = NewType('ChannelID', int)
+ChannelID = NewType('ChannelID', str)
 
 
 class CheatClient(discord.Client):
@@ -73,6 +73,32 @@ class CheatClient(discord.Client):
 			await self._handle_shell(cmd, message.channel)
 	
 	
+	async def on_error(self, event: str, *args, **kwargs):
+		'''
+		Sends an error message to the user, and the error's traceback to us.
+		:param event: name of the method that caused the error
+		:return: None
+		'''
+		info = f'Error in {event}:\n'
+		
+		# Costum error for each event
+		if event == 'on_server_join':
+			channel = discord.utils.find(lambda c: c.name == 'general', args[0].channels)
+			info += 'Server: {0.name} ({0.id})'.format(args[0])
+		elif event == 'on_message':
+			channel = args[0].channel
+			info += 'Message by {0.author.name}: "{0.content}"'.format(args[0])
+		else:
+			channel = None
+		
+		info += '\n' + traceback.format_exc()
+		log(logging.ERROR, info)
+		await self.send_message(self.get_channel(ERRORS_CHANNEL), info)
+		
+		if channel:
+			await self.send_message(channel, ERROR_MSG)
+
+
 	async def _handle_shell(self, cmd: List[str], chnl: discord.Channel):
 		'''
 		Handles commands in shell mode.
@@ -105,7 +131,7 @@ class CheatClient(discord.Client):
 		Processes request to get a nd send a cheat sheet.
 		Splits response to avoid surpassing maximum length.
 		:param cmd: the received command
-		:param channel:
+		:param channel: the channel the command was sent from
 		'''
 		res = re.sub(COLOR_CODE, '', get_cht(cmd))
 		
@@ -121,16 +147,3 @@ class CheatClient(discord.Client):
 			
 			res = res[len(part):]
 			await self.send_message(chnl, f'```{lang}\n{part}\n```')
-	
-	async def on_error(self, event_method: str, *args, **kwargs)->None:
-		'''
-		sends an email to the developers and sends an error message
-		:param event_method: str: name of the method with the error
-		:returns: None
-		'''
-		error_message = 'An error occurred, please wait...'
-		info = sys.exc_info()
-		await self.send_message(self.messages[-1].channel, error_message)
-		logging.log(logging.ERROR, info)
-		await self.send_message(discord.User(username='namer hacesef#1355'), info)
-		await self.send_message(discord.User(username='PaperBag#9164'), info)
