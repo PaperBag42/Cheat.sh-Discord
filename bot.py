@@ -4,10 +4,10 @@ import re
 import traceback
 
 from logging import log, INFO
-from typing import Dict, List, NewType
+from typing import Dict, List, Optional, NewType
 
 from util import get_cht, check_lang
-from consts import *
+from consts import *  # pylint: disable=W0614
 
 
 ChannelID = NewType('ChannelID', str)
@@ -34,10 +34,10 @@ class CheatClient(discord.Client):
 		:return: None
 		'''
 		log(INFO, f'Successfully logged in to {server.name}')
-		for channel in server.channels:
-			if channel.name == 'general':
-				await self.send_message(channel, HELP_MSG)
-				break
+		
+		channel = _default_channel(server)
+		if channel:
+			await self.send_message(channel, HELP_MSG)
 	
 	
 	async def on_message(self, message: discord.Message):
@@ -46,7 +46,7 @@ class CheatClient(discord.Client):
 		:param message: the received message
 		:return: None
 		'''
-		cmd = message.content.split('#')[0].split()
+		cmd = message.content.split('#')[0].replace(COLON_REPLACE, ':').split()
 		if not cmd:
 			return
 		
@@ -83,7 +83,7 @@ class CheatClient(discord.Client):
 		
 		# Costum error for each event
 		if event == 'on_server_join':
-			channel = discord.utils.find(lambda c: c.name == 'general', args[0].channels)
+			channel = _default_channel(args[0])
 			info += 'Server: {0.name} ({0.id})'.format(args[0])
 		elif event == 'on_message':
 			channel = args[0].channel
@@ -147,3 +147,13 @@ class CheatClient(discord.Client):
 			
 			res = res[len(part):]
 			await self.send_message(chnl, f'```{lang}\n{part}\n```')
+
+
+def _default_channel(s: discord.Server) -> Optional[discord.Channel]:
+	'''
+	Helper function to find a server's default channel.
+	Currently searches for a channel named "general".
+	:param s: the server to find the default channel of
+	:return: the server's default channel, or None if not found
+	'''
+	return discord.utils.find(lambda c: c.name == 'general', s.channels)

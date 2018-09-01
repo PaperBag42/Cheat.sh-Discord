@@ -2,6 +2,9 @@ CWORD = '!cht'
 HELP = '--help'
 SHELL = '--shell'
 
+# writing a command with a colon brings up the emojis menu
+COLON_REPLACE = ';'
+
 API_URL_BASE = 'http://cht.sh/'
 CURL_HEADER = {'User-Agent': 'curl'}
 
@@ -51,6 +54,7 @@ ERROR_MSG = '''
 Something went wrong.
 I will report the error, but you can still head over to <@295577662691213312> and <@367633593654050816> and punch them in the face.
 '''
+SERVER_ERROR = 'Cannot access cheat.sh server at the moment'
 
 COLOR_CODE = r'\x1b\[.+?m'  # simple regex to remove color codes
 MAX_LEN = 1990

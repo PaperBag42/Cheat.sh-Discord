@@ -1,7 +1,7 @@
 import aiohttp
 from typing import List
 
-from consts import API_URL_BASE, CURL_HEADER, INVALID_LANG
+from consts import *  # pylint: disable=W0614
 
 
 async def get_cht(cmd: List[str]) -> str:
@@ -15,7 +15,7 @@ async def get_cht(cmd: List[str]) -> str:
 	# get a response for cmd
 	async with aiohttp.get(f"{API_URL_BASE}{cmd[0]}/{'+'.join(cmd[1:])}", headers=CURL_HEADER) as response:
 		if response.status >= 500:  # server error
-			return 'Cannot access cheat.sh server at the moment'
+			return SERVER_ERROR
 		response.raise_for_status()  # client error, pass to on_error()
 		
 		return await response.text()
