@@ -1,22 +1,15 @@
 import discord
 import logging
-import requests
 import re
-import os
 
-from logging import log, INFO, WARN
-from sys import argv, exit
-from typing import Dict, List, Generator, NewType
+from logging import log, INFO
+from typing import Dict, List, NewType
 
+from util import get_cht, check_lang
 from consts import *
 
 
 ChannelID = NewType('ChannelID', int)
-
-headers: Dict[str, str] = requests.utils.default_headers()
-headers.update({
-	'User-Agent': 'curl'
-})
 
 
 class CheatClient(discord.Client):
@@ -127,59 +120,3 @@ class CheatClient(discord.Client):
 			
 			res = res[len(part):]
 			await self.send_message(chnl, f'```{lang}\n{part}\n```')
-
-
-def get_cht(cmd: List[str]) -> str:
-	'''
-	Gets the output from the cht.sh server.
-	:param cmd: input for the server
-	'''
-	if '--shell' in cmd:
-		return 'Shell mode is not available.'
-
-	# get a response for cmd
-	response = requests.get(f"{API_URL_BASE}{cmd[0]}/{'+'.join(cmd[1:])}", headers=headers)
-	if response.status_code != 200 and response.status_code != 500:
-		return 'Cannot acsess cheat.sh server at the moment'
-	elif response.status_code == 500:  # internal server error
-		return 'Somthing is wrong with the cheat servers'
-	return response.text
-
-
-def check_lang(lang: str) -> str:
-	'''
-	Finds the language in the language list to make sure it is valid.
-	:return: an empty string if valid, or an error message.
-	'''
-	lines = get_cht([':list']).splitlines()
-	if len(lines) == 1:  # error
-		return lines[0]
-	
-	langs = set()
-	for line in lines:
-		ind = line.find('/')
-		if ind != -1:
-			if lang == line[:ind]:
-				return ''
-			langs.add(line[:ind])
-	return INVALID_LANG.format(lang, '\t'.join(langs))
-
-
-if __name__ == '__main__':
-	logging.basicConfig(level=WARN)
-	
-	if len(argv) > 1:
-		token = argv[1]
-		log(INFO, f'Got token from command line: {token}')
-	elif 'TOKEN' in os.environ:
-		token = os.environ.get('TOKEN')
-		log(INFO, f'Got token from env: {token}')
-	else:
-		log(INFO, 'Usage: python bot.py TOKEN')
-		exit(1)
-	
-	try:
-		CheatClient().run(token)
-	except discord.errors.LoginFailure:
-		log(logging.ERROR, 'Fatal: Invalid token.')
-		exit(1)
