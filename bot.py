@@ -10,11 +10,6 @@ from typing import Dict, List, Generator, NewType
 
 from consts import *
 
-'''
-TODOs
-1. make a special shell mode for specific channels
-'''
-
 ChannelID = NewType('ChannelID', int)
 
 headers: Dict[str, str] = requests.utils.default_headers()
@@ -26,6 +21,11 @@ class CheatClient(discord.Client):
 	'Costum discord client for cht.sh commands'
 	
 	shells: Dict[ChannelID, str] = {}
+	
+	
+	async def on_ready(self):
+		'Sets presence to a useful message'
+		await self.change_presence(game=discord.Game(name=STATUS))
 	
 	
 	async def on_server_join(self, server: discord.Server):

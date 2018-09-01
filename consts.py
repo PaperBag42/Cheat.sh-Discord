@@ -4,6 +4,7 @@ SHELL = '--shell'
 
 API_URL_BASE = 'http://cht.sh/'
 
+STATUS = '!cht --help'
 HELP_MSG = '''```bash
 # cheat.sh, the only cheatsheet you need, is now on discord.
 
