@@ -10,7 +10,7 @@ CURL_HEADER = {'User-Agent': 'curl'}
 
 STATUS = '!cht --help'
 HELP_MSG = '''```bash
-# cheat.sh, the only cheatsheet you need, is now on discord.
+# cheat.sh, the only cheat sheet you need, is now on discord.
 
 # Usage is similar to the cht.sh command line client:
 !cht go reverse a list

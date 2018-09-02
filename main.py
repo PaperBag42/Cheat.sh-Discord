@@ -16,7 +16,7 @@ if __name__ == '__main__':
 		token = environ.get('TOKEN')
 		log(INFO, f'Got token from env: {token}')
 	else:
-		log(INFO, 'Usage: python bot.py TOKEN')
+		log(INFO, 'Usage: python main.py TOKEN')
 		exit(1)
 	
 	CheatClient().run(token)
