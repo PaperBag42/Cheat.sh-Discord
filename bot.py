@@ -91,7 +91,7 @@ class CheatClient(discord.Client):
 		else:
 			channel = None
 		
-		info += '\n' + traceback.format_exc()
+		info += f'\n```python\n{traceback.format_exc()}\n```'
 		log(logging.ERROR, info)
 		await self.send_message(self.get_channel(ERRORS_CHANNEL), info)
 		

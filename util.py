@@ -9,9 +9,6 @@ async def get_cht(cmd: List[str]) -> str:
 	Gets the output from the cht.sh server.
 	:param cmd: input for the server
 	'''
-	if '--shell' in cmd:
-		return 'Shell mode is not available.'
-
 	# get a response for cmd
 	async with aiohttp.get(f"{API_URL_BASE}{cmd[0]}/{'+'.join(cmd[1:])}", headers=CURL_HEADER) as response:
 		if response.status >= 500:  # server error
