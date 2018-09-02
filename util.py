@@ -5,10 +5,10 @@ from consts import *  # pylint: disable=W0614
 
 
 async def get_cht(cmd: List[str]) -> str:
-	'''
+	"""
 	Gets the output from the cht.sh server.
 	:param cmd: input for the server
-	'''
+	"""
 	# get a response for cmd
 	async with aiohttp.get(f"{API_URL_BASE}{cmd[0]}/{'+'.join(cmd[1:])}", headers=CURL_HEADER) as response:
 		if response.status >= 500:  # server error
@@ -19,10 +19,11 @@ async def get_cht(cmd: List[str]) -> str:
 
 
 async def check_lang(lang: str) -> str:
-	'''
+	"""
 	Finds the language in the language list to make sure it is valid.
+	:param lang: the language to check
 	:return: an empty string if valid, or an error message.
-	'''
+	"""
 	lines = await get_cht([':list']).splitlines()
 	if len(lines) == 1:  # error
 		return lines[0]
