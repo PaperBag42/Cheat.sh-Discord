@@ -9,6 +9,7 @@ from bot import CheatClient
 if __name__ == '__main__':
 	logging.basicConfig(level=logging.WARN)
 	
+	token: str
 	if len(argv) > 1:
 		token = argv[1]
 		log(INFO, f'Got token from command line: {token}')
