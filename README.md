@@ -13,8 +13,15 @@ To host it on your own machine, follow these steps:
 4. Run the script with your token as an argument: `python main.py my-token` OR as an environment variable: `export TOKEN=my-token`.
 
 ### Examples
-```
+```bash
+# use '!cht' to execute queries
 !cht go reverse a list
 !cht python random list elements
 !cht js parse json
+
+# ';' is supported as a replacement to ':' because emojis
+!cht python ;learn
+
+# start shell mode on a specific channel
+!cht --shell
 ```
