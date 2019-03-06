@@ -1,4 +1,7 @@
 # Cheat.sh for Discord
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/97a2aced6ded4c6691d07492a1016e48)](https://app.codacy.com/app/PaperBag42/cheat.sh-discord?utm_source=github.com&utm_medium=referral&utm_content=PaperBag42/cheat.sh-discord&utm_campaign=Badge_Grade_Dashboard)
+
 #### The only cheat sheet you need, now on Discord.
 
 ![screenshot](bot_info/screenshot.png)
