@@ -16,7 +16,9 @@ if __name__ == '__main__':
 	args = arg_parser.parse_args()
 	if args.token:
 		token = args.token
-	if 'TOKEN' in environ:
+		log(logging.INFO, "got token from command line")
+	elif 'TOKEN' in environ:
+		log(logging.INFO, "got token from ENV")
 		token = environ.get('TOKEN')
 	else:
 		arg_parser.print_help()
