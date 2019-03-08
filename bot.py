@@ -137,7 +137,7 @@ class CheatClient(discord.Client):
 			part = res[:max_len]
 			last = part.rfind('\n')
 			if last != -1:
-				part = part[:last]			
+				part = part[:last]	
 			res = res[len(part):]
 			await self.send_message(chnl, f'```{lang}\n{part}\n```')
 

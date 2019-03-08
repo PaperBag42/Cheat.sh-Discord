@@ -27,7 +27,7 @@ async def check_lang(lang: str) -> str:
 	lines = await get_cht([':list']).splitlines()
 	if len(lines) == 1:  # error
 		return lines[0]
-	# get lang from lines:	
+	# get lang from lines:
 	langs = set()
 	for line in lines:
 		ind = line.find('/')
