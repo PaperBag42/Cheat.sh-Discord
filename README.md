@@ -2,7 +2,7 @@
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/97a2aced6ded4c6691d07492a1016e48)](https://app.codacy.com/app/PaperBag42/cheat.sh-discord?utm_source=github.com&utm_medium=referral&utm_content=PaperBag42/cheat.sh-discord&utm_campaign=Badge_Grade_Dashboard)
 
-#### The only cheat sheet you need, now on Discord.
+## The only cheat sheet you need, now on Discord
 
 ![screenshot](bot_info/screenshot.png)
 
@@ -15,7 +15,7 @@ We're currently hosting the bot on Heroku. You're more than welcome to [**invite
 To host it on your own machine, follow these steps:
 1. Clone this repository: `git clone https://github.com/PaperBag42/cheat.sh-discord.git`
 2. Install the requirements for python 3.6: `python -m pip install -r requirements.txt`
-3. Add the bot to your apps at [https://discordapp.com/developers/applications/] and generate an OAuth2 link to add it to your server (no permissions required).
+3. Add the bot to your apps [in this page](https://discordapp.com/developers/applications/) and generate an OAuth2 link to add it to your server (no permissions required).
 4. Run the script with your token as an argument: `python main.py my-token` OR as an environment variable: `export TOKEN=my-token`.
 
 ### Examples
