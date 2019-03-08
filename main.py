@@ -1,8 +1,8 @@
 import logging
 import argparse
-from logging import log, INFO
+from logging import log
 from os import environ
-from sys import argv, exit
+from sys import exit
 
 from bot import CheatClient
 
@@ -16,11 +16,13 @@ if __name__ == '__main__':
 	args = arg_parser.parse_args()
 	if args.token:
 		token = args.token
-	if 'TOKEN' in environ:
+		log(logging.INFO, "got token from command line")
+	elif 'TOKEN' in environ:
+		log(logging.INFO, "got token from ENV")
 		token = environ.get('TOKEN')
 	else:
 		arg_parser.print_help()
 		exit(1)
-		
+	# run the bot with our token
 	CheatClient().run(token)
 	print()
